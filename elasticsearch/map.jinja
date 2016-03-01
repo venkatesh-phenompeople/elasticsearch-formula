@@ -1,0 +1,36 @@
+{% set elasticsearch = salt['grains.filter_by']({
+    'default': {
+        'pkgs': [
+            'elasticsearch',
+        ],
+        'service': 'elasticsearch',
+        'conf_file': '/etc/elasticsearch/elasticsearch.conf',
+        'gpg-key': 'http://packages.elastic.co/GPG-KEY-elasticsearch',
+        'pkg_repo_base': 'http://packages.elastic.co/elasticsearch',
+        'pkg_repo_version': '2.x',
+        'configuration_settings': {
+            'cluster.name': 'elasticsearch_cluster',
+            'discovery.zen.minimum_master_nodes': 2,
+            'gateway.recovery_after_nodes': 2,
+            'gateway.expected_nodes': 3,
+            'gateway.recovery_after_time': 5
+        },
+        'disable_swap': True,
+        'fd_limit': 100000,
+        'max_map_count': 262144
+    },
+    'Debian': {
+        'pkgs': [
+            'elasticsearch',
+            'openjdk-7-jre-headless'
+        ],
+        'pkg_repo_suffix': 'debian'
+    },
+    'RedHat': {
+        'pkgs': [
+            'elasticsearch',
+            'openjdk-7-jre-headless'
+        ],
+        'pkg_repo_suffix': 'centos'
+    },
+}, grain='os_family', merge=salt['pillar.get']('elasticsearch:lookup'), base='default') %}
