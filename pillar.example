@@ -1,5 +1,12 @@
 elasticsearch:
   lookup:
+  plugins:
+    - name: cloud-aws
+      config:
+        cloud:
+          aws:
+            access_key: accesskeystring
+            secret_key: secretkeystring
 
 mine_functions:
   network.ip_addrs: [eth0]

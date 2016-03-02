@@ -12,4 +12,5 @@ base:
 echo "\
 base:
   '*':
-    - elasticsearch" | sudo tee /srv/salt/top.sls
+    - elasticsearch
+    - elasticsearch.plugins" | sudo tee /srv/salt/top.sls

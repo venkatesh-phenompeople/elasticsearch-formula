@@ -31,6 +31,11 @@ Set up the Elasticsearch package repository on the host.
 
 Update elasticsearch config to set the unicast hosts with the other Elasticsearch nodes.
 
+``elasticsearch.plugins``
+----------------------
+
+Install Elasticsearch plugins specified by Pillar
+
 Template
 ========
 
