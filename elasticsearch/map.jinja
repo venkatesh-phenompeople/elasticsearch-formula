@@ -5,8 +5,8 @@
         ],
         'service': 'elasticsearch',
         'conf_file': '/etc/elasticsearch/elasticsearch.conf',
-        'gpg-key': 'http://packages.elastic.co/GPG-KEY-elasticsearch',
-        'pkg_repo_base': 'http://packages.elastic.co/elasticsearch',
+        'gpg-key': 'https://packages.elastic.co/GPG-KEY-elasticsearch',
+        'pkg_repo_base': 'https://packages.elastic.co/elasticsearch',
         'pkg_repo_version': '2.x',
         'configuration_settings': {
             'cluster.name': 'elasticsearch_cluster',
@@ -21,16 +21,16 @@
     },
     'Debian': {
         'pkgs': [
-            'elasticsearch',
             'openjdk-7-jre-headless'
         ],
-        'pkg_repo_suffix': 'debian'
+        'pkg_repo_suffix': 'debian',
+        'env_file': "/etc/default/elasticsearch"
     },
     'RedHat': {
         'pkgs': [
-            'elasticsearch',
-            'openjdk-7-jre-headless'
+            'java-1.8.0-openjdk-headless'
         ],
-        'pkg_repo_suffix': 'centos'
+        'pkg_repo_suffix': 'centos',
+        'env_file': "/etc/sysconfig/elasticsearch"
     },
 }, grain='os_family', merge=salt['pillar.get']('elasticsearch:lookup'), base='default') %}

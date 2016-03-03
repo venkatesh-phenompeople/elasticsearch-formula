@@ -5,7 +5,7 @@ def test_elasticsearch_repository_configured(SystemInfo, File):
     if distro in ['ubuntu', 'debian']:
         assert File('/etc/apt/sources.list').contains('packages.elastic.co')
     if distro in ['redhat', 'centos', 'fedora']:
-        assert File('/etc/apt/yum.repos.d/elasticsearch').exists
+        assert File('/etc/yum.repos.d/elasticsearch.repo').exists
 
 
 def test_elasticsearch_installed(Package):
@@ -27,12 +27,18 @@ def test_correct_io_scheduler(Command):
             'cat /sys/block/{0}/queue/scheduler'.format(dev.strip())) == 'noop'
 
 
-def test_correct_heap_size(File, Command):
+def test_correct_heap_size(File, Command, SystemInfo):
     max_heap = int(
         Command.check_output('cat /proc/meminfo | head -1 | awk \'{print $2}\'')
     ) / 1024 // 2
-    assert File('/etc/default/elasticsearch').contains('ES_HEAP_SIZE={0}m'
-                                                       .format(max_heap))
+    distro = SystemInfo.distribution
+    if distro in ['ubuntu', 'debian']:
+        fname = File('/etc/default/elasticsearch')
+        assert fname.exists
+    if distro in ['redhat', 'centos', 'fedora']:
+        fname = File('/etc/sysconfig/elasticsearch')
+        assert fname.exists
+    assert fname.contains('ES_HEAP_SIZE={0}m' .format(max_heap))
 
 
 def test_swappiness_set(Command, File):

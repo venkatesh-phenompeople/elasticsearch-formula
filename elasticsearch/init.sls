@@ -1,15 +1,20 @@
 {% from "elasticsearch/map.jinja" import elasticsearch with context %}
-{% set os_family = grains['os_family'] %}
 
 include:
   - elasticsearch.repository
 
-install_elasticsearch:
+install_pkg_dependencies:
   pkg.installed:
     - names: {{ elasticsearch.pkgs }}
     - refresh: True
+
+install_elasticsearch:
+  pkg.installed:
+    - name: elasticsearch
+    - refresh: True
     - require:
         - pkgrepo: configure_elasticsearch_package_repo
+        - pkg: install_pkg_dependencies
 
 
 # Update the I/O scheduler if using SSD to improve write throughput https://www.elastic.co/guide/en/elasticsearch/guide/current/hardware.html
@@ -24,7 +29,7 @@ update_io_scheduler_for_{{device_name}}:
 {% set heap_size = heap_max if heap_max < 31744 else 31744 %}
 update_elasticsearch_heap_size:
   file.replace:
-    - name: /etc/default/elasticsearch
+    - name: {{ elasticsearch.env_file }}
     - pattern: '#?ES_HEAP_SIZE=\d+\w+'
     - repl: 'ES_HEAP_SIZE={{ heap_size }}m'
     - append_if_not_found: True

@@ -8,5 +8,11 @@ if [[ -z $(which testinfra) ]]
 then
     sudo pip install testinfra
 fi
-sudo rm -rf /vagrant/tests/__pycache__
-testinfra /vagrant/tests
+if [ "$(ls /vagrant)" ]
+then
+    SRCDIR=/vagrant
+else
+    SRCDIR=/home/vagrant/sync
+fi
+sudo rm -rf $SRCDIR/tests/__pycache__
+testinfra $SRCDIR/tests
