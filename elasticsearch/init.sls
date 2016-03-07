@@ -1,21 +1,22 @@
 {% from "elasticsearch/map.jinja" import elasticsearch with context %}
 
-include:
-  - elasticsearch.repository
-
 install_pkg_dependencies:
   pkg.installed:
     - names: {{ elasticsearch.pkgs }}
     - refresh: True
+    - require_in:
+        - pkgrepo: configure_elasticsearch_package_repo
+
+include:
+  - elasticsearch.repository
 
 install_elasticsearch:
-  pkg.installed:
+  pkg.latest:
     - name: elasticsearch
     - refresh: True
     - require:
         - pkgrepo: configure_elasticsearch_package_repo
         - pkg: install_pkg_dependencies
-
 
 # Update the I/O scheduler if using SSD to improve write throughput https://www.elastic.co/guide/en/elasticsearch/guide/current/hardware.html
 {% for device_name in salt.grains.get('SSDs') %}
@@ -86,8 +87,9 @@ configure_elasticsearch:
     - context:
         config: {{ elasticsearch.configuration_settings }}
     - watch_in:
-        - service: elasticsearch
+        - service: elasticsearch_service
 
-elasticsearch:
+elasticsearch_service:
   service.running:
+    - name: elasticsearch
     - enable: True
