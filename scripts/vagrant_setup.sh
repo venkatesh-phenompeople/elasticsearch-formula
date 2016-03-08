@@ -18,6 +18,10 @@ base:
     - pillar" | sudo tee /srv/pillar/top.sls
 echo "\
 base:
-  '*':
+  'roles:elasticsearch':
+    - match: grain
     - elasticsearch
-    - elasticsearch.plugins" | sudo tee /srv/salt/top.sls
+    - elasticsearch.plugins
+  'roles:kibana':
+    - match: grain
+    - elasticsearch.kibana" | sudo tee /srv/salt/top.sls

@@ -3,9 +3,10 @@
 def test_elasticsearch_repository_configured(SystemInfo, File):
     distro = SystemInfo.distribution
     if distro in ['ubuntu', 'debian']:
-        assert File('/etc/apt/sources.list').contains('packages.elastic.co')
+        assert File('/etc/apt/sources.list').contains(
+            'packages.elastic.co/elasticsearch')
     if distro in ['redhat', 'centos', 'fedora']:
-        assert File('/etc/yum.repos.d/elasticsearch.repo').exists
+        assert File('/etc/yum.repos.d/kibana.repo').exists
 
 
 def test_elasticsearch_installed(Package):

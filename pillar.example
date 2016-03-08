@@ -1,5 +1,20 @@
 elasticsearch:
   lookup:
+    configuration_settings:
+      {% if 'kibana' in salt.grains.get('roles', []) %}
+      'node.master': 'false'
+      'node.data': 'false'
+      {% endif %}
+      'cluster.name': 'elasticsearch_cluster'
+      'discovery.zen.minimum_master_nodes': 2
+      'gateway.recovery_after_nodes': 2
+      'gateway.expected_nodes': 3
+      'gateway.recovery_after_time': 5
+    products:
+      {% if 'kibana' in salt.grains.get('roles', []) %}
+      kibana: 4.4
+      {% endif %}
+      elasticsearch: 2.x
   plugins:
     - name: cloud-aws
       config:
@@ -11,3 +26,14 @@ elasticsearch:
 mine_functions:
   network.ip_addrs: [eth0]
   network.get_hostname: []
+
+kibana:
+  ssl:
+    cert_params:
+      emailAddress: your@name.com
+      bits: 4096
+      CN: kibana.yourdomain.com
+      ST: MA
+      L: Boston
+      O: Your Company
+      OU: Your Department

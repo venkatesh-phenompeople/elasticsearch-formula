@@ -1,0 +1,28 @@
+{% set kibana = salt['grains.filter_by']({
+    'default': {
+        'config': {
+            'elasticsearch_url': 'http://localhost:9200',
+            'server.host': '127.0.0.1',
+            'server.port': '5601'
+        },
+        'nginx_config': {
+            'cert_path': '/etc/salt/ssl/certs/kibana.yourdomain.com.crt',
+            'key_path': '/etc/salt/ssl/certs/kibana.yourdomain.com.key',
+        },
+        'ssl_directory': '/etc/salt/ssl/certs',
+        'es_client_node': True
+    },
+    'Debian': {
+        'pkgs': [
+            'apt-transport-https',
+            'nginx'
+        ],
+        'nginx_site_path': '/etc/nginx/sites-enabled'
+    },
+    'RedHat': {
+        'pkgs': [
+            'nginx'
+        ],
+        'nginx_site_path': '/etc/nginx/sites-enabled'
+    },
+}, grain='os_family', merge=salt['pillar.get']('elasticsearch:lookup'), base='default') %}

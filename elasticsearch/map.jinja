@@ -7,12 +7,9 @@
         'conf_file': '/etc/elasticsearch/elasticsearch.conf',
         'gpg-key': 'https://packages.elastic.co/GPG-KEY-elasticsearch',
         'pkg_repo_base': 'https://packages.elastic.co',
-        'products': [
-            {
-                'name': 'elasticsearch',
-                'pkg_repo_version': '2.x'
-            }
-        ],
+        'products': {
+            'elasticsearch': '2.x'
+        },
         'configuration_settings': {
             'cluster.name': 'elasticsearch_cluster',
             'discovery.zen.minimum_master_nodes': 2,

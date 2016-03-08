@@ -1,4 +1,4 @@
-{% from "elasticsearch/map.jinja" import elasticsearch, elasticsearch_config with context %}
+{% from "elasticsearch/map.jinja" import elasticsearch with context %}
 
 include:
   - elasticsearch
@@ -9,7 +9,7 @@ elasticsearch-config:
     - source: salt://elasticsearch/templates/conf.jinja
     - template: jinja
     - context:
-      config: {{ elasticsearch_config }}
+        config: {{ elasticsearch.configuration_settings }}
     - watch_in:
       - service: elasticsearch
     - require:
