@@ -24,4 +24,5 @@ base:
     - elasticsearch.plugins
   'roles:kibana':
     - match: grain
-    - elasticsearch.kibana" | sudo tee /srv/salt/top.sls
+    - elasticsearch.kibana
+    - elasticsearch.kibana.nginx_extra_config" | sudo tee /srv/salt/top.sls

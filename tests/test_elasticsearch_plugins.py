@@ -9,4 +9,4 @@ def test_plugin_installed(Command):
 
 @pytest.mark.plugins
 def test_plugin_config(File):
-    assert File('/etc/elasticsearch/elasticsearch.yml').contains('aws')
+    assert File('/etc/elasticsearch/elasticsearch.yml').contains('region')

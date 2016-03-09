@@ -9,6 +9,7 @@
             'cert_path': '/etc/salt/ssl/certs/kibana.yourdomain.com.crt',
             'key_path': '/etc/salt/ssl/certs/kibana.yourdomain.com.key',
         },
+        'nginx_extra_config_template_source': 'salt://elasticsearch/kibana/templates/nginx_extra.conf',
         'ssl_directory': '/etc/salt/ssl/certs',
         'es_client_node': True
     },
@@ -25,4 +26,4 @@
         ],
         'nginx_site_path': '/etc/nginx/sites-enabled'
     },
-}, grain='os_family', merge=salt['pillar.get']('elasticsearch:lookup'), base='default') %}
+}, grain='os_family', merge=salt['pillar.get']('kibana:lookup'), base='default') %}

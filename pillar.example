@@ -4,12 +4,15 @@ elasticsearch:
       {% if 'kibana' in salt.grains.get('roles', []) %}
       'node.master': 'false'
       'node.data': 'false'
-      {% endif %}
-      'cluster.name': 'elasticsearch_cluster'
-      'discovery.zen.minimum_master_nodes': 2
-      'gateway.recovery_after_nodes': 2
-      'gateway.expected_nodes': 3
+      {% else %}
+      'discovery.zen.minimum_master_nodes': 1
+      'gateway.recovery_after_nodes': 1
+      'gateway.expected_nodes': 1
       'gateway.recovery_after_time': 5
+      {% endif %}
+      network.host: _eth1_,_lo_
+      cluster.name: 'elasticsearch_cluster'
+      discovery.zen.ping.unicast.hosts: ['192.168.33.10', '192.168.33.11']
     products:
       {% if 'kibana' in salt.grains.get('roles', []) %}
       kibana: 4.4
@@ -20,14 +23,21 @@ elasticsearch:
       config:
         cloud:
           aws:
-            access_key: accesskeystring
-            secret_key: secretkeystring
-
+            region: us-east-1
 mine_functions:
   network.ip_addrs: [eth0]
   network.get_hostname: []
 
 kibana:
+  lookup:
+    nginx_extra_config_dict:
+      auth_basic: 'on'
+      auth_basic_user_file: /etc/nginx/kibana_users
+    nginx_extra_files:
+      - name: nginx_auth
+        path: /etc/nginx/kibana_users
+        contents: |
+          kibana:YT6iPwvMfqU02
   ssl:
     cert_params:
       emailAddress: your@name.com

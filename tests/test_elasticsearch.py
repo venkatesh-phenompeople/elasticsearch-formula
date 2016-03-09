@@ -1,4 +1,7 @@
 """Use testinfra and py.test to verify formula works properly"""
+import pytest
+import time
+
 
 def test_elasticsearch_repository_configured(SystemInfo, File):
     distro = SystemInfo.distribution
@@ -13,10 +16,13 @@ def test_elasticsearch_installed(Package):
     assert Package('elasticsearch').is_installed
 
 
-def test_elasticsearch_running(Service):
+@pytest.mark.slow
+def test_elasticsearch_running(Service, Socket):
     es = Service('elasticsearch')
     assert es.is_running
     assert es.is_enabled
+    time.sleep(30)
+    assert Socket('tcp://127.0.0.1:9200').is_listening
 
 
 def test_correct_io_scheduler(Command):
