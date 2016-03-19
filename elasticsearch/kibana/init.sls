@@ -6,6 +6,7 @@ install_kibana_dependencies:
     - names: {{ kibana.pkgs }}
     - require_in:
         - pkgrepo: configure_kibana_package_repo
+    - reload_modules: True
 
 include:
   - elasticsearch.repository
@@ -22,10 +23,8 @@ install_kibana:
 configure_kibana:
   file.managed:
     - name: /opt/kibana/config/kibana.yml
-    - source: salt://elasticsearch/kibana/templates/kibana.yml
-    - template: jinja
-    - context:
-        config: {{ kibana.config }}
+    - contents: |
+        {{ kibana.config | yaml(False) | indent(8) }}
 
 ensure_kibana_ssl_directory:
   file.directory:

@@ -6,10 +6,8 @@ include:
 elasticsearch-config:
   file.managed:
     - name: {{ elasticsearch.conf_file }}
-    - source: salt://elasticsearch/templates/conf.jinja
-    - template: jinja
-    - context:
-        config: {{ elasticsearch.configuration_settings }}
+    - text: |
+        {{ elasticsearch.configuration_settings | yaml(False) | indent(8) }}
     - watch_in:
       - service: elasticsearch
     - require:

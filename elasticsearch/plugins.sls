@@ -8,9 +8,7 @@ install_{{ plugin.name }}_plugin:
 plugin_configuration_for_{{ plugin.name }}:
   file.append:
     - name: /etc/elasticsearch/elasticsearch.yml
-    - source: salt://elasticsearch/templates/plugin_config.yml
-    - template: jinja
-    - context:
-        config: {{ plugin.config }}
+    - text: |
+        {{ plugin.config | yaml(False) | indent(8) }}
 {% endif %}
 {% endfor %}

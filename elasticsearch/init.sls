@@ -82,10 +82,8 @@ increase_max_map_count:
 configure_elasticsearch:
   file.managed:
     - name: /etc/elasticsearch/elasticsearch.yml
-    - source: salt://elasticsearch/templates/conf.jinja
-    - template: jinja
-    - context:
-        config: {{ elasticsearch.configuration_settings }}
+    - contents: |
+        {{ elasticsearch.configuration_settings | yaml(False) | indent(8)}}
     - watch_in:
         - service: elasticsearch_service
 
