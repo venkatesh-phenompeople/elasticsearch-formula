@@ -16,13 +16,15 @@
     'Debian': {
         'pkgs': [
             'apt-transport-https',
-            'nginx'
+            'nginx',
+            'openjdk-7-jre-headless'
         ],
         'nginx_site_path': '/etc/nginx/sites-enabled'
     },
     'RedHat': {
         'pkgs': [
-            'nginx'
+            'nginx',
+            'java-1.8.0-openjdk-headless'
         ],
         'nginx_site_path': '/etc/nginx/sites-enabled'
     },

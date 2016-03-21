@@ -1,12 +1,13 @@
-{% from "elasticsearch/kibana/map.jinja" import elasticsearch, kibana with context %}
+{% from "elasticsearch/kibana/map.jinja" import kibana with context %}
 {% set os_family = grains['os_family'] %}
 
 install_kibana_dependencies:
   pkg.installed:
-    - names: {{ kibana.pkgs }}
+    - pkgs: {{ kibana.pkgs }}
     - require_in:
         - pkgrepo: configure_kibana_package_repo
     - reload_modules: True
+    - update: True
 
 include:
   - elasticsearch.repository
@@ -32,19 +33,19 @@ ensure_kibana_ssl_directory:
     - makedirs: True
 
 {% if kibana.nginx_config.get('cert_source') %}
-setup_master_ssl_cert:
+setup_kibana_ssl_cert:
   file.managed:
     - name: {{ kibana.nginx_config.cert_path }}
     - source: {{ kibana.nginx_config.cert_source }}
     - makedirs: True
 
-setup_master_ssl_key:
+setup_kibana_ssl_key:
   file.managed:
     - name: {{ kibana.key_path }}
     - source: {{ kibana.key_source }}
     - makedirs: True
 {% else %}
-setup_master_ssl_cert:
+setup_kibana_ssl_cert:
   module.run:
     - name: tls.create_self_signed_cert
     - tls_dir: ssl
