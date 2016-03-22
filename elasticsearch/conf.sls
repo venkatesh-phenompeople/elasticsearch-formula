@@ -6,8 +6,9 @@ include:
 elasticsearch-config:
   file.managed:
     - name: {{ elasticsearch.conf_file }}
-    - text: |
+    - contents: |
         {{ elasticsearch.configuration_settings | yaml(False) | indent(8) }}
+    - makedirs: True
     - watch_in:
       - service: elasticsearch
     - require:

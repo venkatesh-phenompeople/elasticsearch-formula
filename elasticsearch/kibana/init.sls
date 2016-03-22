@@ -11,8 +11,7 @@ install_kibana_dependencies:
 
 include:
   {% if kibana.es_client_node %}
-  - elasticsearch
-  - conf.elasticsearch
+  - elasticsearch.conf
   {% endif %}
   - elasticsearch.repository
 

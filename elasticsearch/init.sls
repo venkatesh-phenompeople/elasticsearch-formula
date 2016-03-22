@@ -84,6 +84,7 @@ configure_elasticsearch:
     - name: /etc/elasticsearch/elasticsearch.yml
     - contents: |
         {{ elasticsearch.configuration_settings | yaml(False) | indent(8)}}
+    - makedirs: True
     - watch_in:
         - service: elasticsearch_service
 

@@ -8,5 +8,5 @@ configure_cluster_unicast:
   file.replace:
     - name: /etc/elasticsearch/elasticsearch.yml
     - pattern: '^discovery.zen.ping.unicast_hosts:.*?$'
-    - repl: 'discovery.zen.ping.unicast_hosts: {{ es_hosts }}'
+    - repl: 'discovery.zen.ping.unicast_hosts: {{ es_hosts | yaml() }}'
     - append_if_not_found: True
