@@ -1,5 +1,8 @@
 {% from 'elasticsearch/kibana/map.jinja' import kibana with context %}
 
+include:
+  - elasticsearch.kibana
+
 {% for file_details in kibana.get('nginx_extra_files', []) %}
 add_file_{{ file_details.name }}:
   file.managed:
@@ -23,3 +26,5 @@ add_extra_config_to_nginx:
     - context:
         dict_config: {{ kibana.get('nginx_extra_config_dict', {}) }}
         list_config: {{ kibana.get('nginx_extra_config_list', []) }}
+    - watch_in:
+        - service: kibana_nginx_service
