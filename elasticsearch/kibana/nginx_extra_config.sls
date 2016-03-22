@@ -4,7 +4,8 @@
 add_file_{{ file_details.name }}:
   file.managed:
     - name: {{ file_details.path }}
-    - contents: {{ file_details.contents }}
+    - contents: |
+        {{ file_details.contents | indent(8) }}
     - require_in:
         - file: add_extra_config_to_nginx
 {% endfor %}
