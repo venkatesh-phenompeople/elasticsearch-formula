@@ -6,13 +6,12 @@
         'service': 'elasticsearch',
         'conf_file': '/etc/elasticsearch/elasticsearch.conf',
         'gpg-key': 'https://packages.elastic.co/GPG-KEY-elasticsearch',
-        'pkg_repo_base': 'https://packages.elastic.co/elasticsearch',
-        'pkg_repo_version': '2.x',
+        'pkg_repo_base': 'https://packages.elastic.co',
+        'products': {
+            'elasticsearch': '2.x'
+        },
         'configuration_settings': {
             'cluster.name': 'elasticsearch_cluster',
-            'discovery.zen.minimum_master_nodes': 2,
-            'gateway.recovery_after_nodes': 2,
-            'gateway.expected_nodes': 3,
             'gateway.recovery_after_time': 5
         },
         'disable_swap': True,
@@ -21,7 +20,8 @@
     },
     'Debian': {
         'pkgs': [
-            'openjdk-7-jre-headless'
+            'openjdk-7-jre-headless',
+            'apt-transport-https'
         ],
         'pkg_repo_suffix': 'debian',
         'env_file': "/etc/default/elasticsearch"

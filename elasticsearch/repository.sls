@@ -9,19 +9,18 @@ install_elasticsearch_gpg_key:
         - pkgrepo: configure_elasticsearch_package_repo
 {% endif %}
 
-configure_elasticsearch_package_repo:
+{% for name, version in elasticsearch.products.items() %}
+configure_{{ name }}_package_repo:
   pkgrepo.managed:
-    - humanname: ElasticSearch
+    - humanname: {{ name }}
     {% if os_family == 'Debian' %}
-    - name: deb {{ elasticsearch.pkg_repo_base}}/{{ elasticsearch.pkg_repo_version }}/{{ elasticsearch.pkg_repo_suffix}} stable main
-    - key_url: https://packages.elastic.co/GPG-KEY-elasticsearch
+    - name: deb {{ elasticsearch.pkg_repo_base}}/{{ name }}/{{ version }}/{{ elasticsearch.pkg_repo_suffix}} stable main
     {% elif os_family == 'RedHat' %}
-    - name: elasticsearch
-    - baseurl: {{ elasticsearch.pkg_repo_base}}/{{ elasticsearch.pkg_repo_version }}/{{ elasticsearch.pkg_repo_suffix}}
+    - name: {{ name }}
+    - baseurl: {{ elasticsearch.pkg_repo_base}}/{{ name }}/{{ version }}/{{ elasticsearch.pkg_repo_suffix}}
     - gpgcheck: 1
     - enabled: 1
-    - keyid: GPG-KEY-elasticsearch
-    - keyserver: https://packages.elastic.co
     {% endif %}
-    - require_in:
-        - pkg: install_elasticsearch
+    - keyserver: pgp.mit.edu
+    - keyid: D88E42B4
+{% endfor %}
