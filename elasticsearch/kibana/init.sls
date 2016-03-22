@@ -10,13 +10,14 @@ install_kibana_dependencies:
     - update: True
 
 include:
-  - elasticsearch.repository
   {% if kibana.es_client_node %}
-  - elasticsearch.conf
+  - elasticsearch
+  - conf.elasticsearch
   {% endif %}
+  - elasticsearch.repository
 
 install_kibana:
-  pkg.latest:
+  pkg.installed:
     - name: kibana
     - require:
         - pkgrepo: configure_kibana_package_repo

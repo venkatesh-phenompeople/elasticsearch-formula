@@ -2,7 +2,7 @@
 
 install_pkg_dependencies:
   pkg.installed:
-    - names: {{ elasticsearch.pkgs }}
+    - pkgs: {{ elasticsearch.pkgs }}
     - refresh: True
     - require_in:
         - pkgrepo: configure_elasticsearch_package_repo
@@ -11,7 +11,7 @@ include:
   - elasticsearch.repository
 
 install_elasticsearch:
-  pkg.latest:
+  pkg.installed:
     - name: elasticsearch
     - refresh: True
     - require:
