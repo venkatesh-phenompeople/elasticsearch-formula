@@ -43,3 +43,12 @@ def test_nginx_running(File, Socket, Service):
 def test_ssl_directory(File):
     assert File('/etc/salt/ssl/certs').exists
     assert File('/etc/salt/ssl/certs').is_directory
+
+
+@pytest.mark.kibana
+def test_kibana_env(File, SystemInfo):
+    if SystemInfo.distribution == 'ubuntu':
+        f = File('/etc/init.d/kibana')
+    else:
+        f = File('/etc/systemd/system/kibana.service')
+    assert f.contains('NODE_OPTIONS=--max-old-space-size')

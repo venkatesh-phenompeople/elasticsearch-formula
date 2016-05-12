@@ -3,7 +3,7 @@
         'config': {
             'elasticsearch_url': 'http://localhost:9200',
             'server.host': '127.0.0.1',
-            'server.port': '5601'
+            'server.port': 5601
         },
         'nginx_config': {
             'cert_path': '/etc/salt/ssl/certs/kibana.yourdomain.com.crt',
@@ -11,7 +11,10 @@
         },
         'nginx_extra_config_template_source': 'salt://elasticsearch/kibana/templates/nginx_extra.conf',
         'ssl_directory': '/etc/salt/ssl/certs',
-        'es_client_node': True
+        'es_client_node': True,
+        'kibana_env': [
+            'NODE_OPTIONS=--max-old-space-size=1024'
+        ]
     },
     'Debian': {
         'pkgs': [

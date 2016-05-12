@@ -45,7 +45,7 @@ def test_correct_heap_size(File, Command, SystemInfo):
     if distro in ['redhat', 'centos', 'fedora']:
         fname = File('/etc/sysconfig/elasticsearch')
         assert fname.exists
-    assert fname.contains('ES_HEAP_SIZE={0}m' .format(max_heap))
+    assert fname.contains('ES_HEAP_SIZE={0}m'.format(max_heap))
 
 
 def test_swappiness_set(Command, File):

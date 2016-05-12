@@ -1,3 +1,5 @@
 .ssh-config
 .vagrant/*
 *~
+tests/.cache/
+__pycache__/

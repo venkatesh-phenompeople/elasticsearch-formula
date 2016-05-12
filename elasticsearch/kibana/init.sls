@@ -79,6 +79,34 @@ remove_default_nginx_config:
   file.absent:
     - name: {{ kibana.nginx_site_path }}/default
 
+{% if salt.grains.get('init') == 'systemd' %}
+add_node_environment_variables:
+  file.managed:
+    - name: /etc/systemd/system/kibana.service.d/kibana_env.conf
+    - makedirs: True
+    - contents: |
+        [Service]
+        {% for env in kibana.kibana_env %}
+        Environment='{{ env }}'
+        {% endfor %}
+
+reload_kibana_systemd_units:
+  cmd.wait:
+    - name: systemctl daemon-reload
+    - watch:
+        - file: add_node_environment_variables
+{% elif salt.grains.get('init') == 'upstart' %}
+add_node_environment_variables:
+  file.blockreplace:
+    - name: /etc/init.d/kibana
+    - marker_start: '  # Setup any environmental stuff beforehand'
+    - marker_end: '  # Run the program!'
+    - content: |
+        {% for env in kibana.kibana_env %}
+        export {{ env }}
+        {% endfor %}
+{% endif %}
+
 kibana_service:
   service.running:
     - name: kibana
