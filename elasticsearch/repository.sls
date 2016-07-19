@@ -21,6 +21,5 @@ configure_{{ name }}_package_repo:
     - gpgcheck: 1
     - enabled: 1
     {% endif %}
-    - keyserver: pgp.mit.edu
-    - keyid: D88E42B4
+    - keyurl: https://packages.elastic.co/GPG-KEY-elasticsearch
 {% endfor %}
