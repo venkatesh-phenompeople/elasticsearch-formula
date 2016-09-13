@@ -15,11 +15,12 @@ configure_{{ name }}_package_repo:
     - humanname: {{ name }}
     {% if os_family == 'Debian' %}
     - name: deb {{ elasticsearch.pkg_repo_base}}/{{ name }}/{{ version }}/{{ elasticsearch.pkg_repo_suffix}} stable main
+    - refresh_db: True
     {% elif os_family == 'RedHat' %}
     - name: {{ name }}
     - baseurl: {{ elasticsearch.pkg_repo_base}}/{{ name }}/{{ version }}/{{ elasticsearch.pkg_repo_suffix}}
     - gpgcheck: 1
     - enabled: 1
     {% endif %}
-    - keyurl: https://packages.elastic.co/GPG-KEY-elasticsearch
+    - key_url: https://packages.elastic.co/GPG-KEY-elasticsearch
 {% endfor %}
