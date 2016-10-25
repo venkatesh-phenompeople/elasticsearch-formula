@@ -36,6 +36,21 @@ Update elasticsearch config to set the unicast hosts with the other Elasticsearc
 
 Install Elasticsearch plugins specified by Pillar
 
+``elasticsearch.kibana``
+------------------------
+
+Install and configure Kibana for use with Elasticsearch. Proxied by Nginx
+
+``elasticsearch.elastalert``
+----------------------------
+
+Install and configure `Elastalert<http://elastalert.readthedocs.io/en/latest/>_` for generating alerts from Elasticsearch data.
+
+``elasticsearch.elastalert.config``
+-----------------------------------
+
+Update the configuration and rules for Elastalert and restart the service.
+
 Template
 ========
 

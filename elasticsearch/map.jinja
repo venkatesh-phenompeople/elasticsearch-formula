@@ -24,13 +24,13 @@
             'apt-transport-https'
         ],
         'pkg_repo_suffix': 'debian',
-        'env_file': "/etc/default/elasticsearch"
+        'env_file': '/etc/default/elasticsearch'
     },
     'RedHat': {
         'pkgs': [
             'java-1.8.0-openjdk-headless'
         ],
         'pkg_repo_suffix': 'centos',
-        'env_file': "/etc/sysconfig/elasticsearch"
+        'env_file': '/etc/sysconfig/elasticsearch'
     },
 }, grain='os_family', merge=salt['pillar.get']('elasticsearch:lookup'), base='default') %}
