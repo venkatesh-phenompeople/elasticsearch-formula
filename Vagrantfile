@@ -12,7 +12,7 @@ Vagrant.configure(2) do |config|
     elasticsearch.vm.provider "virtualbox" do |vb|
       vb.memory = "2048"
     end
-    elasticsearch.vm.network "private_network", ip: "192.168.33.11"
+    elasticsearch.vm.network "private_network", ip: "192.168.34.11"
     elasticsearch.vm.provision "shell", path: "scripts/vagrant_setup.sh"
     elasticsearch.vm.provision :salt do |salt|
       salt.bootstrap_options = '-U -Z'
@@ -33,7 +33,7 @@ Vagrant.configure(2) do |config|
       vb.memory = "1024"
     end
     kibana.vm.box = "debian/jessie64"
-    kibana.vm.network "private_network", ip: "192.168.33.10"
+    kibana.vm.network "private_network", ip: "192.168.34.10"
     kibana.vm.provision "shell", path: "scripts/vagrant_setup.sh"
     kibana.vm.provision :salt do |salt|
       salt.bootstrap_options = '-U -Z'
@@ -43,7 +43,7 @@ Vagrant.configure(2) do |config|
       salt.verbose = true
       salt.grains_config = "grains/kibana.yml"
     end
-    kibana.vm.provision "shell", "path": "scripts/testinfra.sh"
+    kibana.vm.provision "shell", path: "scripts/testinfra.sh"
   end
 
 end
