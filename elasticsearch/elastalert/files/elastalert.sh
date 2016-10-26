@@ -3,7 +3,7 @@
 PIDFILE=/var/run/elastalert.pid
 
 start () {
-    /usr/local/bin/elastalert -config /etc/elastalert/config.yaml 2>&1 &
+    /usr/local/bin/elastalert --config /etc/elastalert/config.yaml 2>&1 &
     echo $! > $PIDFILE
     echo "Elastalert is starting"
 }
