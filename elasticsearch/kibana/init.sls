@@ -32,17 +32,27 @@ ensure_kibana_ssl_directory:
     - name: {{ kibana.ssl_directory }}
     - makedirs: True
 
-{% if kibana.nginx_config.get('cert_source') %}
+{% if kibana.ssl.get('cert_source') or kibana.ssl.get('cert_contents') %}
 setup_kibana_ssl_cert:
   file.managed:
     - name: {{ kibana.nginx_config.cert_path }}
-    - source: {{ kibana.nginx_config.cert_source }}
+    {% if kibana.ssl.get('cert_source') %}
+    - source: {{ kibana.ssl.cert_source }}
+    {% elif kibana.ssl.get('cert_contents') %}
+    - contents: |
+        {{ kibana.ssl.cert_contents | indent(8) }}
+    {% endif %}
     - makedirs: True
 
 setup_kibana_ssl_key:
   file.managed:
-    - name: {{ kibana.key_path }}
-    - source: {{ kibana.key_source }}
+    - name: {{ kibana.nginx_config.key_path }}
+    {% if kibana.ssl.get('key_source') %}
+    - source: {{ kibana.ssl.key_source }}
+    {% elif kibana.ssl.get('key_contents') %}
+    - contents: |
+        {{ kibana.ssl.key_contents | indent(8) }}
+    {% endif %}
     - makedirs: True
 {% else %}
 setup_kibana_ssl_cert:
