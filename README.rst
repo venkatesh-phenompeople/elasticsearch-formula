@@ -22,17 +22,23 @@ Available states
 Install and configure Elasticsearch.
 
 ``elasticsearch.repository``
-----------------------
+----------------------------
 
 Set up the Elasticsearch package repository on the host.
 
+``elasticsearch.repository``
+----------------------------
+
+Set up the Elastic Stack package repository on the host to support version >= 5.x of Elastic Stack projects.
+
+
 ``elasticsearch.cluster``
-----------------------
+-------------------------
 
 Update elasticsearch config to set the unicast hosts with the other Elasticsearch nodes.
 
 ``elasticsearch.plugins``
-----------------------
+-------------------------
 
 Install Elasticsearch plugins specified by Pillar
 

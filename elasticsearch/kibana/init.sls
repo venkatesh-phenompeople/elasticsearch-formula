@@ -1,11 +1,16 @@
 {% from "elasticsearch/kibana/map.jinja" import kibana with context %}
+{% from "elasticsearch/map.jinja" import elasticsearch with context %}
 {% set os_family = grains['os_family'] %}
 
 install_kibana_dependencies:
   pkg.installed:
     - pkgs: {{ kibana.pkgs }}
     - require_in:
+        {% if elasticsearch.use_elastic_stack %}
+        - pkgrepo: configure_elastic_stack_package_repo
+        {% else %}
         - pkgrepo: configure_kibana_package_repo
+        {% endif %}
     - reload_modules: True
     - update: True
 
@@ -13,13 +18,21 @@ include:
   {% if kibana.es_client_node %}
   - elasticsearch.conf
   {% endif %}
+  {% if elasticsearch.use_elastic_stack %}
+  - elasticsearch.elastic_stack_repository
+  {% else %}
   - elasticsearch.repository
+  {% endif %}
 
 install_kibana:
   pkg.installed:
     - name: kibana
     - require:
+        {% if elasticsearch.use_elastic_stack %}
+        - pkgrepo: configure_elastic_stack_package_repo
+        {% else %}
         - pkgrepo: configure_kibana_package_repo
+        {% endif %}
 
 configure_kibana:
   file.managed:

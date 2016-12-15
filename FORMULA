@@ -2,7 +2,7 @@ name: elasticsearch
 os: RedHat, CentOS, Ubuntu, Debian
 os_family: RedHat, Debian
 version: 201612
-release: 1
+release: 2
 summary: SaltStack formula for building an Elasticsearch node with a focus on clustered deployments.
 description: SaltStack formula for building an Elasticsearch node with a focus on clustered deployments.
 top_level_dir: elasticsearch
