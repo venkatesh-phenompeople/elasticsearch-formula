@@ -4,23 +4,32 @@
 {% if os_family == 'RedHat' %}
 install_elasticsearch_gpg_key:
   cmd.run:
-    - name: rpm --import https://packages.elastic.co/GPG-KEY-elasticsearch
+    - name: rpm --import {{ elasticsearch.gpg-key }}
     - require_in:
         - pkgrepo: configure_elasticsearch_package_repo
 {% endif %}
 
-{% for name, version in elasticsearch.products.items() %}
-configure_{{ name }}_package_repo:
+configure_elasticsearch_package_repo:
   pkgrepo.managed:
-    - humanname: {{ name }}
+    - humanname: 'Elastic Stack'
     {% if os_family == 'Debian' %}
-    - name: deb {{ elasticsearch.pkg_repo_base}}/{{ name }}/{{ version }}/{{ elasticsearch.pkg_repo_suffix}} stable main
+    - name: deb {{ elasticsearch.pkg_repo_url }}/apt stable main
     - refresh_db: True
     {% elif os_family == 'RedHat' %}
     - name: {{ name }}
-    - baseurl: {{ elasticsearch.pkg_repo_base}}/{{ name }}/{{ version }}/{{ elasticsearch.pkg_repo_suffix}}
+    - baseurl: {{ elasticsearch.pkg_repo_url }}/yum
     - gpgcheck: 1
     - enabled: 1
     {% endif %}
-    - key_url: https://packages.elastic.co/GPG-KEY-elasticsearch
-{% endfor %}
+    - key_url: {{ elasticsearch.gpg_key }}
+
+configure_openjdk_repo:
+    pkgrepo.managed:
+    - humanname: 'OpenJDK'
+    - name: {{ elasticsearch.openjdk_repo }}
+    {% if os_family == 'Ubuntu' %}
+    - key: {{ elasticsearch.openjdk_key }}
+    - keyserver: {{ elasticsearch.keyserver}}
+    {% endif %}
+    - require_in:
+        - install_pkg_dependencies

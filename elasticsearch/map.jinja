@@ -1,15 +1,11 @@
+{% set version = salt.pillar.get('elasticsearch:version', '5.x') %}
+{% if version == '5.x' %}
 {% set elasticsearch = salt['grains.filter_by']({
     'default': {
         'pkgs': [
             'elasticsearch',
         ],
         'service': 'elasticsearch',
-        'conf_file': '/etc/elasticsearch/elasticsearch.conf',
-        'gpg-key': 'https://packages.elastic.co/GPG-KEY-elasticsearch',
-        'pkg_repo_base': 'https://packages.elastic.co',
-        'products': {
-            'elasticsearch': '2.x'
-        },
         'configuration_settings': {
             'cluster.name': 'elasticsearch_cluster',
             'gateway.recovery_after_time': 5
@@ -17,15 +13,31 @@
         'disable_swap': True,
         'fd_limit': 100000,
         'max_map_count': 262144,
-        'use_elastic_stack': False
+        'use_elastic_stack': False,
+        'conf_file': '/etc/elasticsearch/elasticsearch.conf',
+        'gpg_key': 'https://artifacts.elastic.co/GPG-KEY-elasticsearch',
+        'pkg_repo_base': 'https://artifacts.elastic.co',
+        'pkg_repo_url': 'https://artifacts.elastic.co/packages/{0}'.format(version),
     },
-    'Debian': {
+    'Ubuntu': {
         'pkgs': [
-            'openjdk-7-jre-headless',
+            'openjdk-8-jre-headless',
             'apt-transport-https'
         ],
         'pkg_repo_suffix': 'debian',
-        'env_file': '/etc/default/elasticsearch'
+        'env_file': '/etc/default/elasticsearch',
+        'keyserver': 'keyserver.ubuntu.com',
+        'openjdk_key': '86F44E2A',
+        'openjdk_repo': 'deb http://ppa.launchpad.net/openjdk-r/ppa/ubuntu {0} main'.format(grains['oscodename']), 
+    },
+    'Debian':{
+        'pkgs': [
+            'openjdk-8-jre-headless',
+            'apt-transport-https'
+        ],
+        'pkg_repo_suffix': 'debian',
+        'env_file': '/etc/default/elasticsearch',
+        'openjdk_repo': 'deb http://ftp.de.debian.org/debian {0}-backports main'.format(grains['oscodename']),
     },
     'RedHat': {
         'pkgs': [
@@ -35,3 +47,52 @@
         'env_file': '/etc/sysconfig/elasticsearch'
     },
 }, grain='os_family', merge=salt['pillar.get']('elasticsearch:lookup'), base='default') %}
+{% else %}
+{% set elasticsearch = salt['grains.filter_by']({
+    'default': {
+        'pkgs': [
+            'elasticsearch',
+        ],
+        'service': 'elasticsearch',
+        'configuration_settings': {
+            'cluster.name': 'elasticsearch_cluster',
+            'gateway.recovery_after_time': 5
+        },
+        'disable_swap': True,
+        'fd_limit': 100000,
+        'max_map_count': 262144,
+        'use_elastic_stack': False,
+        'conf_file': '/etc/elasticsearch/elasticsearch.conf',
+        'gpg_key': 'http://packages.elastic.co/GPG-KEY-elasticsearch',
+        'pkg_repo_base': 'http://packages.elastic.co',
+        'pkg_repo_url': 'http://packages.elastic.co/packages/{0}'.format(version),
+    },
+    'Ubuntu': {
+        'pkgs': [
+            'openjdk-8-jre-headless',
+            'apt-transport-https'
+        ],
+        'pkg_repo_suffix': 'debian',
+        'env_file': '/etc/default/elasticsearch',
+        'keyserver': 'keyserver.ubuntu.com',
+        'openjdk_key': '86F44E2A',
+        'openjdk_repo': 'deb http://ppa.launchpad.net/openjdk-r/ppa/ubuntu {0} main'.format(grains['oscodename']), 
+    },
+    'Debian':{
+        'pkgs': [
+            'openjdk-8-jre-headless',
+            'apt-transport-https'
+        ],
+        'pkg_repo_suffix': 'debian',
+        'env_file': '/etc/default/elasticsearch',
+        'openjdk_repo': 'deb http://ftp.de.debian.org/debian {0}-backports main'.format(grains['oscodename']),
+    },
+    'RedHat': {
+        'pkgs': [
+            'java-1.8.0-openjdk-headless'
+        ],
+        'pkg_repo_suffix': 'centos',
+        'env_file': '/etc/sysconfig/elasticsearch'
+    },
+}, grain='os_family', merge=salt['pillar.get']('elasticsearch:lookup'), base='default') %}
+{% endif %}

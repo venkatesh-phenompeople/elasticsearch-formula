@@ -1,5 +1,6 @@
 elasticsearch:
   lookup:
+    version: '5.x'
     configuration_settings:
       {% if 'kibana' in salt.grains.get('roles', []) %}
       'node.master': 'false'
@@ -17,13 +18,13 @@ elasticsearch:
       {% if 'kibana' in salt.grains.get('roles', []) %}
       kibana: 4.4
       {% endif %}
-      elasticsearch: 2.x
   plugins:
-    - name: cloud-aws
+    - name: discovery-ec2
       config:
         cloud:
           aws:
             region: us-east-1
+    - name: repository-s3
 mine_functions:
   network.ip_addrs: [eth0]
   network.get_hostname: []
