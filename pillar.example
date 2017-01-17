@@ -1,29 +1,30 @@
 elasticsearch:
   lookup:
+    version: '5.x'
     configuration_settings:
       {% if 'kibana' in salt.grains.get('roles', []) %}
       'node.master': 'false'
       'node.data': 'false'
       {% else %}
       'discovery.zen.minimum_master_nodes': 1
-      'gateway.recovery_after_nodes': 1
+      'gateway.recover_after_nodes': 1
       'gateway.expected_nodes': 1
-      'gateway.recovery_after_time': 5
+      'gateway.recover_after_time': '5m'
       {% endif %}
-      network.host: _eth1_,_lo_
+      network.host: _local_
       cluster.name: 'elasticsearch_cluster'
       discovery.zen.ping.unicast.hosts: ['192.168.33.10', '192.168.33.11']
     products:
       {% if 'kibana' in salt.grains.get('roles', []) %}
       kibana: 4.4
       {% endif %}
-      elasticsearch: 2.x
   plugins:
-    - name: cloud-aws
+    - name: discovery-ec2
       config:
         cloud:
           aws:
             region: us-east-1
+    - name: repository-s3
 mine_functions:
   network.ip_addrs: [eth0]
   network.get_hostname: []
