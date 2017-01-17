@@ -46,6 +46,9 @@ update_elasticsearch_heap_size:
         - service: elasticsearch
 
 {% else %}
+{% if salt.grains.get('mem_total') > 4096 or salt.pillar.get('elasticsearch:version') > 3 %}
+{% set heap_max = salt.grains.get('mem_total', 0) // 2 %}
+{% set heap_size = heap_max if heap_max < 31744 else 31744 %}
 update_elasticsearch_heap_size:
   file.replace:
     - name: {{ elasticsearch.env_file }}
