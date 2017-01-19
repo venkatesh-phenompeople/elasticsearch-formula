@@ -6,3 +6,4 @@ release: 2
 summary: SaltStack formula for building an Elasticsearch node with a focus on clustered deployments.
 description: SaltStack formula for building an Elasticsearch node with a focus on clustered deployments.
 top_level_dir: elasticsearch
+recommended:

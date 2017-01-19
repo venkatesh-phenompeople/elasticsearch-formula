@@ -13,9 +13,10 @@ install_{{ plugin.name }}_plugin:
         - service: elasticsearch
 {% else %}
 install_{{ plugin.name }}_plugin:
-    - name: /usr/share/elasticsearch/bin/plugin install {{ plugin.get('location', plugin.name) }}
-    - unless: "[ $(/usr/share/elasticsearch/bin/plugin list | grep {{ plugin.name }} | wc -l) -eq 1 ]"
-    - watch_in:
+    cmd.run:
+     - name: /usr/share/elasticsearch/bin/plugin install {{ plugin.get('location', plugin.name) }}
+     - unless: "[ $(/usr/share/elasticsearch/bin/plugin list | grep {{ plugin.name }} | wc -l) -eq 1 ]"
+     - watch_in:
         - service: elasticsearch
 {% endif %}
 

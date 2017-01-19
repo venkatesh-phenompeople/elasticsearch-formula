@@ -1,7 +1,10 @@
 {% from 'elasticsearch/kibana/map.jinja' import kibana with context %}
+{% from "elasticsearch/map.jinja" import elasticsearch with context %}
 
+{% if elasticsearch.use_elastic_stack %}
 include:
   - elasticsearch.kibana
+  - elasticsearch.kibana.service
 
 {% for file_details in kibana.get('nginx_extra_files', []) %}
 add_file_{{ file_details.name }}:
@@ -28,3 +31,4 @@ add_extra_config_to_nginx:
         list_config: {{ kibana.get('nginx_extra_config_list', []) }}
     - watch_in:
         - service: kibana_nginx_service
+{% endif %}

@@ -1,13 +1,29 @@
 {% from "elasticsearch/kibana/map.jinja" import kibana with context %}
+{% from "elasticsearch/map.jinja" import elasticsearch with context %}
 
 include:
     - .service
 
+create_kibana_directory:
+  file.directory:
+    {% if elasticsearch.version == '5.x' %}
+    - name: /etc/kibana
+    {% else %}
+    - name: /opt/kibana/config
+    {% endif %}
+    - makedirs: True
+
 configure_kibana:
   file.managed:
+    {% if elasticsearch.version == '5.x' %}
+    - name: /etc/kibana/kibana.yml
+    {% else %}
     - name: /opt/kibana/config/kibana.yml
+    {% endif %}
     - contents: |
         {{ kibana.config | yaml(False) | indent(8) }}
+    - require:
+        - file: create_kibana_directory
 
 ensure_kibana_ssl_directory:
   file.directory:
@@ -66,6 +82,9 @@ configure_kibana_nginx:
         config: {{ kibana.nginx_config }}
         ssl_directory: {{ kibana.ssl_directory }}
         kibana_config: {{ kibana.config }}
+    - require:
+        - cmd: generate_nginx_dhparam
+        - module: setup_kibana_ssl_cert
 
 remove_default_nginx_config:
   file.absent:

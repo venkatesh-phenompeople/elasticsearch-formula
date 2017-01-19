@@ -12,12 +12,9 @@ elasticsearch:
       'gateway.recover_after_time': '5m'
       {% endif %}
       network.host: _local_
+      transport.host: _eth0_
       cluster.name: 'elasticsearch_cluster'
       discovery.zen.ping.unicast.hosts: ['192.168.33.10', '192.168.33.11']
-    products:
-      {% if 'kibana' in salt.grains.get('roles', []) %}
-      kibana: 4.4
-      {% endif %}
   plugins:
     - name: discovery-ec2
       config:

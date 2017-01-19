@@ -9,6 +9,7 @@ install_elasticsearch_gpg_key:
         - pkgrepo: configure_elasticsearch_package_repo
 {% endif %}
 
+{% if elasticsearch.version == '5.x' %}
 configure_elasticsearch_package_repo:
   pkgrepo.managed:
     - humanname: 'Elastic Stack'
@@ -22,6 +23,22 @@ configure_elasticsearch_package_repo:
     - enabled: 1
     {% endif %}
     - key_url: {{ elasticsearch.gpg_key }}
+{% else %}
+configure_elasticsearch_package_repo:
+  pkgrepo.managed:
+    - humanname: 'Elastic Stack'
+    {% if os_family == 'Debian' %}
+    - name: deb {{ elasticsearch.pkg_repo_url }}/debian stable main
+    - refresh_db: True
+    {% elif os_family == 'RedHat' %}
+    - name: {{ name }}
+    - baseurl: {{ elasticsearch.pkg_repo_url }}/centos
+    - gpgcheck: 1
+    - enabled: 1
+    {% endif %}
+    - key_url: {{ elasticsearch.gpg_key }}
+
+{% endif %}
 
 configure_openjdk_repo:
     pkgrepo.managed:

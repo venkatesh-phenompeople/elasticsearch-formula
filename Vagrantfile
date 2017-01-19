@@ -10,11 +10,12 @@ Vagrant.configure(2) do |config|
   config.vm.define "elasticsearch" do |elasticsearch|
     elasticsearch.vm.box = "debian/jessie64"
     elasticsearch.vm.provider "virtualbox" do |vb|
-      vb.memory = "2048"
+      vb.memory = "4096"
     end
     elasticsearch.vm.network "private_network", ip: "192.168.34.11"
     elasticsearch.vm.provision "shell", path: "scripts/vagrant_setup.sh"
     elasticsearch.vm.provision :salt do |salt|
+      salt.minion_config = "minion.conf"
       salt.bootstrap_options = '-U -Z'
       salt.masterless = true
       salt.run_highstate = true
@@ -30,12 +31,13 @@ Vagrant.configure(2) do |config|
 
   config.vm.define "kibana" do |kibana|
     kibana.vm.provider "virtualbox" do |vb|
-      vb.memory = "1024"
+      vb.memory = "4096"
     end
     kibana.vm.box = "debian/jessie64"
     kibana.vm.network "private_network", ip: "192.168.34.10"
     kibana.vm.provision "shell", path: "scripts/vagrant_setup.sh"
     kibana.vm.provision :salt do |salt|
+      salt.minion_config = "minion.conf"
       salt.bootstrap_options = '-U -Z'
       salt.masterless = true
       salt.run_highstate = true
