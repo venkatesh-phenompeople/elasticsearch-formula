@@ -26,19 +26,21 @@ configure_elasticsearch_package_repo:
     {% endif %}
     - key_url: {{ elasticsearch.gpg_key }}
 {% else %}
+{% for name, version in elasticsearch.products.items() %}
 configure_elasticsearch_package_repo:
   pkgrepo.managed:
     - humanname: 'Elasticsearch 2.x'
     {% if os_family == 'Debian' %}
-    - name: deb {{ elasticsearch_repo.pkg_repo_url }}/debian stable main
+    - name: deb {{ elasticsearch.pkg_repo_base}}/{{ name }}/{{ version }}/{{ elasticsearch.pkg_repo_suffix}} stable main
     - refresh_db: True
     {% elif os_family == 'RedHat' %}
     - name: {{ name }}
-    - baseurl: {{ elasticsearch_repo.pkg_repo_url }}/centos
+    - baseurl: {{ elasticsearch.pkg_repo_base}}/{{ name }}/{{ version }}/{{ elasticsearch.pkg_repo_suffix}}
     - gpgcheck: 1
     - enabled: 1
     {% endif %}
     - key_url: {{ elasticsearch.gpg_key }}
+{% endfor %}
 {% endif %}
 
 {% if osfullname == 'Debian' %}
