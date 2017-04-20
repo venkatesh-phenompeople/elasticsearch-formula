@@ -6,7 +6,7 @@ include:
 
 create_kibana_directory:
   file.directory:
-    {% if elasticsearch.version == '5.x' %}
+    {% if elasticsearch.elastic_stack %}
     - name: /etc/kibana
     {% else %}
     - name: /opt/kibana/config
@@ -15,7 +15,7 @@ create_kibana_directory:
 
 configure_kibana:
   file.managed:
-    {% if elasticsearch.version == '5.x' %}
+    {% if elasticsearch.elastic_stack %}
     - name: /etc/kibana/kibana.yml
     {% else %}
     - name: /opt/kibana/config/kibana.yml

@@ -9,14 +9,13 @@ include:
 {% set log_dir = elasticsearch.log_folder %}
 
 {% for dir in (conf_dir, log_dir) %}
-{% if dir %}
-{{ dir }}:
+create_directory{{ dir|replace('/', '_') }}to_ensure_proper_permissions:
   file.directory:
+    - name: {{ dir }}
     - user: elasticsearch
     - group: elasticsearch
     - mode: 0700
     - makedirs: True
-{% endif %}
 {% endfor %}
 
 # Update the I/O scheduler if using SSD to improve write throughput https://www.elastic.co/guide/en/elasticsearch/guide/current/hardware.html
@@ -29,7 +28,7 @@ update_io_scheduler_for_{{device_name}}:
 # Update Heap Size according to available RAM https://www.elastic.co/guide/en/elasticsearch/reference/current/heap-size.html
 {% set heap_max = salt.grains.get('mem_total', 0) // 2 %}
 {% set heap_size = heap_max if heap_max < 31744 else 31744 %}
-{% if elasticsearch.version == '5.x' %}
+{% if elasticsearch.elastic_stack %}
 config_jvm_options:
   file.replace:
   - name: '{{ elasticsearch.conf_folder }}/jvm.options'

@@ -1,6 +1,7 @@
 elasticsearch:
+  version: '5.x'
   lookup:
-    version: '5.x'
+    elastic_stack: True
     configuration_settings:
       {% if 'kibana' in salt.grains.get('roles', []) %}
       'node.master': 'false'

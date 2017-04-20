@@ -4,13 +4,13 @@ test_elasticsearch_repository_configured:
   testinfra.file:
     - name: /etc/apt/sources.list
     - contains:
-        parameter: {{ elasticsearch.pkg_repo_url }}
+        parameter: {{ elasticsearch_repo.pkg_repo_url }}
         expected: True
         comparison: is_
 
 test_elasticsearch_config_file:
-	testinfra.file:
-		- name: {{ elasticsearch.conf_file }}
+  testinfra.file:
+    - name: {{ elasticsearch.conf_file }}
     - exists: True
 
 test_elasticsearch_cluster_name:
@@ -31,7 +31,7 @@ test_elasticsearch_cluster_name:
 
 test_elasticsearch_log_directory:
   testinfra.file:
-    - name: {{ elasticsearch.log_folder }} 
+    - name: {{ elasticsearch.log_folder }}
     - is_dir: True
     - exists: True
 
@@ -39,18 +39,17 @@ test_elasticsearch_env_file:
   testinfra.file:
     - name: {{ elasticsearch.env_file }}
     - exists: True
-    {% if elasticsearch.version == '5.x' %}
     - contains:
-        {% if elasticsearch.version == '5.x' %}
+        {% if elasticsearch.elastic_stack %}
         parameter: 'ES_JAVA_OPTS="-Xms{{ heap_size }}m -Xmx{{ heap_size }}m"'
         {% else %}
         parameter: 'ES_HEAP_SIZE={{ heap_size }}m'
         {% endif %}
         expected: True
         comparison: is_
-  
+
 # Add test for IO scheduler
-  
+
 test_elasticsearch_swapiness:
   testinfra.file:
     - name: /etc/fstab

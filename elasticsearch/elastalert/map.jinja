@@ -20,13 +20,19 @@
     },
     'Debian': {
         'pkgs': [
-            'build-essential'
+            'build-essential',
+            'libssl-dev',
+            'libffi-dev',
+            'python-dev'
         ]
     },
     'RedHat': {
         'pkgs': [
             'gcc',
-            'make'
+            'make',
+            'libffi-devel',
+            'python-devel',
+            'openssl-devel'
         ]
     }
 }, grain='os_family', merge=salt.pillar.get('elasticsearch:elastalert:overrides'), base='default') %}
