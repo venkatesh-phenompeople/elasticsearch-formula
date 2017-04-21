@@ -27,7 +27,7 @@ configure_elasticsearch_package_repo:
     - key_url: {{ elasticsearch.gpg_key }}
 {% else %}
 {% for name, version in elasticsearch.products.items() %}
-configure_elasticsearch_package_repo:
+configure_{{ name }}_package_repo:
   pkgrepo.managed:
     - humanname: 'Elasticsearch 2.x'
     {% if os_family == 'Debian' %}
