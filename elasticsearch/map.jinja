@@ -2,7 +2,7 @@
 {% set elasticsearch = salt['grains.filter_by']({
     'default': {
         'version': None,
-        'elastic_stack': True,
+        'elastic_stack': False,
         'pkgs': [
             'elasticsearch',
         ],

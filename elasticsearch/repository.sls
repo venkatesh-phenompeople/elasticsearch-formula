@@ -13,7 +13,7 @@ install_elasticsearch_gpg_key:
 {% if elasticsearch.elastic_stack %}
 configure_elasticsearch_package_repo:
   pkgrepo.managed:
-    - humanname: 'Elasticsearch 5.x'
+    - humanname: Elasticsearch_{{ elasticsearch.version }}
     {% if os_family == 'Debian' %}
     - name: deb {{ elasticsearch_repo.pkg_repo_url }}/apt stable main
     - gpgkey: {{ elasticsearch.gpg_key }}
@@ -29,13 +29,13 @@ configure_elasticsearch_package_repo:
 {% for name, version in elasticsearch.products.items() %}
 configure_{{ name }}_package_repo:
   pkgrepo.managed:
-    - humanname: 'Elasticsearch 2.x'
+    - humanname: {{ name }}
     {% if os_family == 'Debian' %}
-    - name: deb {{ elasticsearch.pkg_repo_base}}/{{ name }}/{{ version }}/{{ elasticsearch.pkg_repo_suffix}} stable main
+    - name: deb {{ elasticsearch_repo.pkg_repo_base}}/{{ name }}/{{ version }}/{{ elasticsearch.pkg_repo_suffix}} stable main
     - refresh_db: True
     {% elif os_family == 'RedHat' %}
     - name: {{ name }}
-    - baseurl: {{ elasticsearch.pkg_repo_base}}/{{ name }}/{{ version }}/{{ elasticsearch.pkg_repo_suffix}}
+    - baseurl: {{ elasticsearch_repo.pkg_repo_base}}/{{ name }}/{{ version }}/{{ elasticsearch.pkg_repo_suffix}}
     - gpgcheck: 1
     - enabled: 1
     {% endif %}
