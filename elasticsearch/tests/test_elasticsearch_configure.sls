@@ -1,10 +1,12 @@
-{% from "elasticsearch/map.jinja" import elasticsearch with context %}
+{% from "elasticsearch/map.jinja" import elasticsearch, elasticsearch_repo with context %}
+{% set heap_max = salt.grains.get('mem_total', 0) // 2 %}
+{% set heap_size = heap_max if heap_max < 31744 else 31744 %}
 
 test_elasticsearch_repository_configured:
   testinfra.file:
     - name: /etc/apt/sources.list
     - contains:
-        parameter: {{ elasticsearch_repo.pkg_repo_url }}
+        parameter: {{ elasticsearch.pkg_repo_url }}
         expected: True
         comparison: is_
 
@@ -17,15 +19,15 @@ test_elasticsearch_cluster_name:
   testinfra.file:
     - name: {{ elasticsearch.conf_folder }}/elasticsearch.yml
     - contains:
-        parameter: "cluster.name: {{ elasticsearch.configuration_settings.cluster.name }}"
+        parameter: "cluster.name: {{ elasticsearch.configuration_settings['cluster.name'] }}"
         expected: True
         comparison: is_
 
-test_elasticsearch_cluster_name:
+test_elasticsearch_recovery_time:
   testinfra.file:
     - name: {{ elasticsearch.conf_folder }}/elasticsearch.yml
     - contains:
-        parameter: "gateway.recover_after_time: {{ elasticsearch.configuration_settings.gateway.recover_after_time }}"
+        parameter: "gateway.recover_after_time: {{ elasticsearch.configuration_settings['gateway.recover_after_time'] }}"
         expected: True
         comparison: is_
 
@@ -81,8 +83,3 @@ test_elasticsearch_max_map_count:
         parameter: "vm.max_map_count={{ elasticsearch.max_map_count }}"
         expected: True
         comparison: is_
-
-
-
-
-
