@@ -8,6 +8,10 @@ install_elastalert_os_package_dependencies:
   pkg.installed:
     - pkgs: {{ elastalert.pkgs }}
 
+remove_python_cryptography_system_package:
+  pkg.removed:
+    - name: python-cryptography
+
 install_elastalert_package:
   pip.installed:
     - name: elastalert
