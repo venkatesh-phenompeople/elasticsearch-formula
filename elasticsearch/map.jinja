@@ -1,31 +1,35 @@
+{% set version = salt.pillar.get('elasticsearch:version', '5.x') %}
 {% set elasticsearch = salt['grains.filter_by']({
     'default': {
+        'version': None,
+        'elastic_stack': False,
         'pkgs': [
             'elasticsearch',
         ],
-        'service': 'elasticsearch',
-        'conf_file': '/etc/elasticsearch/elasticsearch.conf',
-        'gpg-key': 'https://packages.elastic.co/GPG-KEY-elasticsearch',
-        'pkg_repo_base': 'https://packages.elastic.co',
         'products': {
             'elasticsearch': '2.x'
         },
+        'service': 'elasticsearch',
         'configuration_settings': {
             'cluster.name': 'elasticsearch_cluster',
-            'gateway.recovery_after_time': 5
+            'gateway.recover_after_time': '5m',
         },
         'disable_swap': True,
         'fd_limit': 100000,
         'max_map_count': 262144,
-        'use_elastic_stack': False
+        'log_folder': '/var/log/elasticsearch/',
+        'conf_folder': '/etc/elasticsearch/',
+        'conf_file': '/etc/elasticsearch/elasticsearch.conf',
+        'gpg_key': 'https://artifacts.elastic.co/GPG-KEY-elasticsearch'
     },
-    'Debian': {
+    'Debian':{
         'pkgs': [
-            'openjdk-7-jre-headless',
+            'openjdk-8-jre-headless',
             'apt-transport-https'
         ],
         'pkg_repo_suffix': 'debian',
-        'env_file': '/etc/default/elasticsearch'
+        'env_file': '/etc/default/elasticsearch',
+        'openjdk_repo': 'deb http://ftp.us.debian.org/debian/ stretch main contrib non-free'
     },
     'RedHat': {
         'pkgs': [
@@ -35,3 +39,13 @@
         'env_file': '/etc/sysconfig/elasticsearch'
     },
 }, grain='os_family', merge=salt['pillar.get']('elasticsearch:lookup'), base='default') %}
+
+{% if elasticsearch.elastic_stack %}
+{% set elasticsearch_repo = {
+    'pkg_repo_base': 'https://artifacts.elastic.co',
+    'pkg_repo_url': 'https://artifacts.elastic.co/packages/{0}'.format(version)} %}
+{% else %}
+{% set elasticsearch_repo = {
+    'pkg_repo_base': 'http://packages.elastic.co',
+    'pkg_repo_url': 'http://packages.elastic.co/elasticsearch/{0}'.format(version)} %}
+{% endif %}

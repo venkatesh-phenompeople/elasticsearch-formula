@@ -22,6 +22,8 @@ else
     sudo pip install gitpython
 fi
 
+sudo pip install git+https://github.com/mitodl/testinfra@python_ruby_package#egg=testinfra
+
 if [ "$(ls /vagrant)" ]
 then
     SRCDIR=/vagrant

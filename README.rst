@@ -26,12 +26,6 @@ Install and configure Elasticsearch.
 
 Set up the Elasticsearch package repository on the host.
 
-``elasticsearch.repository``
-----------------------------
-
-Set up the Elastic Stack package repository on the host to support version >= 5.x of Elastic Stack projects.
-
-
 ``elasticsearch.cluster``
 -------------------------
 
