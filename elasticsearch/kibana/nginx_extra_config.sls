@@ -2,7 +2,6 @@
 {% from "elasticsearch/map.jinja" import elasticsearch with context %}
 
 include:
-  - elasticsearch.kibana
   - elasticsearch.kibana.service
 
 {% for file_details in kibana.get('nginx_extra_files', []) %}
