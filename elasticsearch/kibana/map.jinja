@@ -1,3 +1,5 @@
+{% from "elasticsearch/map.jinja" import elasticsearch with context %}
+
 {% set kibana = salt['grains.filter_by']({
     'default': {
         'pkgs': [
@@ -5,15 +7,6 @@
             'nginx',
         ],
         'nginx_site_path': '/etc/nginx/sites-enabled',
-        'config': {
-            'elasticsearch.url': 'http://localhost:9200',
-            'server.host': '127.0.0.1',
-            'server.port': 5601
-        },
-        'nginx_config': {
-            'cert_path': '/etc/salt/ssl/certs/kibana.yourdomain.com.crt',
-            'key_path': '/etc/salt/ssl/certs/kibana.yourdomain.com.key',
-        },
         'nginx_extra_config_template_source': 'salt://elasticsearch/kibana/templates/nginx_extra.conf',
         'ssl_directory': '/etc/salt/ssl/certs',
         'kibana_env': [
@@ -22,3 +15,31 @@
         'ssl': {}
     },
 }, grain='os_family', merge=salt['pillar.get']('kibana:lookup'), base='default') %}
+
+{% if elasticsearch.elastic_stack %}
+{% set kibana_conf = {
+    'config': {
+            'elasticsearch.url': 'http://localhost:9200',
+            'server.host': '127.0.0.1',
+            'server.port': 5601
+        },
+    'nginx_config': {
+            'server.ssl.certificate': '/etc/salt/ssl/certs/kibana.yourdomain.com.crt',
+            'server.ssl.key': '/etc/salt/ssl/certs/kibana.yourdomain.com.key',
+        }
+    }
+%}
+{% else %}
+{% set kibana_conf = {
+    'config': {
+            'elasticsearch_url': 'http://localhost:9200',
+            'server_host': '127.0.0.1',
+            'server_port': 5601
+        },
+    'nginx_config': {
+            'cert_path': '/etc/salt/ssl/certs/kibana.yourdomain.com.crt',
+            'key_path': '/etc/salt/ssl/certs/kibana.yourdomain.com.key',
+        }
+    }
+%}
+{% endif %}

@@ -1,4 +1,4 @@
-{% from "elasticsearch/kibana/map.jinja" import kibana with context %}
+{% from "elasticsearch/kibana/map.jinja" import kibana, kibana_conf with context %}
 {% from "elasticsearch/map.jinja" import elasticsearch with context %}
 
 include:
@@ -21,7 +21,7 @@ configure_kibana:
     - name: /opt/kibana/config/kibana.yml
     {% endif %}
     - contents: |
-        {{ kibana.config | yaml(False) | indent(8) }}
+        {{ kibana_conf.config | yaml(False) | indent(8) }}
     - require:
         - file: create_kibana_directory
 
@@ -30,27 +30,25 @@ ensure_kibana_ssl_directory:
     - name: {{ kibana.ssl_directory }}
     - makedirs: True
 
-{% if kibana.ssl.get('cert_source') or kibana.ssl.get('cert_contents') %}
+{% if kibana.ssl.get('cert_source') %}
 setup_kibana_ssl_cert:
   file.managed:
-    - name: {{ kibana.nginx_config.cert_path }}
-    {% if kibana.ssl.get('cert_source') %}
-    - source: {{ kibana.ssl.cert_source }}
-    {% elif kibana.ssl.get('cert_contents') %}
-    - contents: |
-        {{ kibana.ssl.cert_contents | indent(8) }}
+    {% if elasticsearch.elastic_stack %}
+    - name: {{ kibana_conf.nginx_config.server.ssl.certificate }}
+    {% else %}
+    - name: {{ kibana_conf.nginx_config.cert_path }}
     {% endif %}
+    - source: {{ kibana.ssl.cert_source }}
     - makedirs: True
 
 setup_kibana_ssl_key:
   file.managed:
+    {% if elasticsearch.elastic_stack %}
+    - name: {{ kibana_conf.nginx_config.server.ssl.key }}
+    {% else %}
     - name: {{ kibana.nginx_config.key_path }}
-    {% if kibana.ssl.get('key_source') %}
-    - source: {{ kibana.ssl.key_source }}
-    {% elif kibana.ssl.get('key_contents') %}
-    - contents: |
-        {{ kibana.ssl.key_contents | indent(8) }}
     {% endif %}
+    - source: {{ kibana.ssl.key_source }}
     - makedirs: True
 {% else %}
 setup_kibana_ssl_cert:
@@ -79,9 +77,9 @@ configure_kibana_nginx:
     - source: salt://elasticsearch/kibana/templates/nginx.conf
     - template: jinja
     - context:
-        config: {{ kibana.nginx_config }}
+        config: {{ kibana_conf.nginx_config }}
         ssl_directory: {{ kibana.ssl_directory }}
-        kibana_config: {{ kibana.config }}
+        kibana_config: {{ kibana_conf.config }}
     - require:
         - cmd: generate_nginx_dhparam
         - module: setup_kibana_ssl_cert
