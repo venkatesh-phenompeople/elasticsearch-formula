@@ -23,3 +23,10 @@ install_elasticsearch:
     - require:
         - pkgrepo: configure_elasticsearch_package_repo
         - pkg: install_pkg_dependencies
+  file.directory:
+    - name: /usr/share/elasticsearch
+    - user: elasticsearch
+    - group: elasticsearch
+    - recurse:
+        - user
+        - group
