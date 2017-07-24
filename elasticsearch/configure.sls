@@ -105,3 +105,14 @@ configure_elasticsearch:
     - makedirs: True
     - watch_in:
         - service: elasticsearch
+
+set_elasticsearch_folder_permissions:
+  file.directory:
+    - name: /var/lib/elasticsearch
+    - user: elasticsearch
+    - group: elasticsearch
+    - recurse:
+        - user
+        - group
+    - watch_in:
+        - service: elasticsearch
