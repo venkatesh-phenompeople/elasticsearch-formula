@@ -54,6 +54,11 @@ update_elasticsearch_heap_size:
         - service: elasticsearch
 {% endif %}
 
+uncomment_elasticsearch_defaults:
+  file.uncomment:
+    - name: {{ elasticsearch.env_file }}
+    - regex: (START_DAEMON|ES_USER|ES_GROUP|LOG_DIR|DATA_DIR|WORK_DIR|CONF_DIR|CONF_FILE|RESTART_ON_UPGRADE)
+
 # Configure/disable swappiness https://www.elastic.co/guide/en/elasticsearch/reference/current/setup-configuration-memory.html
 {% if elasticsearch.disable_swap %}
 disable_swap_on_elasticsearch_node:
