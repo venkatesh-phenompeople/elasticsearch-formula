@@ -121,3 +121,9 @@ set_elasticsearch_folder_permissions:
         - group
     - watch_in:
         - service: elasticsearch
+
+restart_elasticsearch_service:
+  service.running:
+    - name: elasticsearch
+    - restart: True
+
