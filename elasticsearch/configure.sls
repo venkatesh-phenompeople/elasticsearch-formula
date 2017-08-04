@@ -41,7 +41,7 @@ update_elasticsearch_heap_size:
     - repl: 'ES_JAVA_OPTS="-Xms{{ heap_size }}m -Xmx{{ heap_size }}m"'
     - append_if_not_found: True
     - watch_in:
-        - service: elasticsearch
+        - service: elasticsearch_service
 
 {% else %}
 update_elasticsearch_heap_size:
@@ -51,7 +51,7 @@ update_elasticsearch_heap_size:
     - repl: 'ES_HEAP_SIZE={{ heap_size }}m'
     - append_if_not_found: True
     - watch_in:
-        - service: elasticsearch
+        - service: elasticsearch_service
 {% endif %}
 
 uncomment_elasticsearch_defaults:
@@ -70,7 +70,7 @@ disable_swap_on_elasticsearch_node:
     - match: swap
     - mode: Delete
     - watch_in:
-        - service: elasticsearch
+        - service: elasticsearch_service
 {% else %}
 set_swapiness_for_elasticsearch_node:
   cmd.run:
@@ -79,7 +79,7 @@ set_swapiness_for_elasticsearch_node:
     - name: /etc/sysctl.conf
     - text: vm.swappiness = 1
     - watch_in:
-        - service: elasticsearch
+        - service: elasticsearch_service
 {% endif %}
 
 # Up the count for file descriptors for Lucene https://www.elastic.co/guide/en/elasticsearch/reference/current/file-descriptors.html
@@ -90,7 +90,7 @@ increase_elasticsearch_file_descriptor_limit:
     - name: /etc/sysctl.conf
     - text: fs.file_max={{ elasticsearch.fd_limit }}
     - watch_in:
-        - service: elasticsearch
+        - service: elasticsearch_service
 
 # Increase limits of mmap counts https://www.elastic.co/guide/en/elasticsearch/reference/current/vm-max-map-count.html
 increase_max_map_count:
@@ -100,7 +100,7 @@ increase_max_map_count:
     - name: /etc/sysctl.conf
     - text: vm.max_map_count={{ elasticsearch.max_map_count }}
     - watch_in:
-        - service: elasticsearch
+        - service: elasticsearch_service
 
 configure_elasticsearch:
   file.managed:
@@ -109,7 +109,7 @@ configure_elasticsearch:
         {{ elasticsearch.configuration_settings | yaml(False) | indent(8) }}
     - makedirs: True
     - watch_in:
-        - service: elasticsearch
+        - service: elasticsearch_service
 
 set_elasticsearch_folder_permissions:
   file.directory:
@@ -120,10 +120,10 @@ set_elasticsearch_folder_permissions:
         - user
         - group
     - watch_in:
-        - service: elasticsearch
+        - service: elasticsearch_service
 
 restart_elasticsearch_service:
-  service.running:
+  service.dead:
     - name: elasticsearch
     - restart: True
 
