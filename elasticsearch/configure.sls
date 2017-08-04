@@ -124,6 +124,6 @@ set_elasticsearch_folder_permissions:
 
 restart_elasticsearch_service:
   service.running:
-    - name: elasticsearch
+    - name: elasticsearch_service
     - restart: True
 
