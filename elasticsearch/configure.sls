@@ -123,7 +123,7 @@ set_elasticsearch_folder_permissions:
         - service: elasticsearch_service
 
 restart_elasticsearch_service:
-  service.dead:
+  service.running:
     - name: elasticsearch
     - restart: True
 
