@@ -40,7 +40,7 @@ update_elasticsearch_heap_size:
     - pattern: '^#ES_JAVA_OPTS='
     - repl: 'ES_JAVA_OPTS="-Xms{{ heap_size }}m -Xmx{{ heap_size }}m"'
     - append_if_not_found: True
-    - watch_in:
+    - onchanges_in:
         - service: elasticsearch_service
 
 {% else %}
@@ -50,7 +50,7 @@ update_elasticsearch_heap_size:
     - pattern: '#?ES_HEAP_SIZE=\d+\w+'
     - repl: 'ES_HEAP_SIZE={{ heap_size }}m'
     - append_if_not_found: True
-    - watch_in:
+    - onchanges_in:
         - service: elasticsearch_service
 {% endif %}
 
@@ -69,7 +69,7 @@ disable_swap_on_elasticsearch_node:
     - content: ''
     - match: swap
     - mode: Delete
-    - watch_in:
+    - onchanges_in:
         - service: elasticsearch_service
 {% else %}
 set_swapiness_for_elasticsearch_node:
@@ -78,7 +78,7 @@ set_swapiness_for_elasticsearch_node:
   file.append:
     - name: /etc/sysctl.conf
     - text: vm.swappiness = 1
-    - watch_in:
+    - onchanges_in:
         - service: elasticsearch_service
 {% endif %}
 
@@ -89,7 +89,7 @@ increase_elasticsearch_file_descriptor_limit:
   file.append:
     - name: /etc/sysctl.conf
     - text: fs.file_max={{ elasticsearch.fd_limit }}
-    - watch_in:
+    - onchanges_in:
         - service: elasticsearch_service
 
 # Increase limits of mmap counts https://www.elastic.co/guide/en/elasticsearch/reference/current/vm-max-map-count.html
@@ -99,7 +99,7 @@ increase_max_map_count:
   file.append:
     - name: /etc/sysctl.conf
     - text: vm.max_map_count={{ elasticsearch.max_map_count }}
-    - watch_in:
+    - onchanges_in:
         - service: elasticsearch_service
 
 configure_elasticsearch:
@@ -108,8 +108,18 @@ configure_elasticsearch:
     - contents: |
         {{ elasticsearch.configuration_settings | yaml(False) | indent(8) }}
     - makedirs: True
-    - watch_in:
+    - onchanges_in:
         - service: elasticsearch_service
+
+{% for plugin, settings in salt.pillar.get('elasticsearch:plugin_settings', {}).items() %}
+configure_settings_for_{{ plugin }}:
+  file.managed:
+    - name: /etc/elasticsearch/{{ plugin }}.yml
+    - contents: |
+        {{ settings|yaml(False)|indent(8) }}
+    - onchanges_in:
+        - service: elasticsearch_service
+{% endfor %}
 
 set_elasticsearch_folder_permissions:
   file.directory:
@@ -119,7 +129,7 @@ set_elasticsearch_folder_permissions:
     - recurse:
         - user
         - group
-    - watch_in:
+    - onchanges_in:
         - service: elasticsearch_service
 
 stop_elasticsearch_service:
