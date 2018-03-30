@@ -1,14 +1,15 @@
-{% set version = salt.pillar.get('elasticsearch:version', '5.x') %}
+{% set version = salt.pillar.get('elasticsearch:version', '6.x') %}
 {% set elasticsearch = salt['grains.filter_by']({
     'default': {
         'version': None,
         'elastic_stack': False,
-        'pkgs': [
-            'elasticsearch',
-        ],
+        'pkgs': [],
         'products': {
             'elasticsearch': '2.x'
         },
+        'es_pkgs': [
+            'elasticsearch'
+        ],
         'service': 'elasticsearch',
         'configuration_settings': {
             'node.data': true,

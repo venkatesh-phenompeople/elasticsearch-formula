@@ -17,7 +17,7 @@ install_pkg_dependencies:
 
 install_elasticsearch:
   pkg.installed:
-    - name: elasticsearch
+    - name: {{ elasticsearch.es_pkgs }}
     - refresh: True
     - skip_verify: {{ not elasticsearch.get('verify_package', True) }}
     - require:
