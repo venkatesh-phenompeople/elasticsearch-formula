@@ -41,6 +41,8 @@ setup_kibana_ssl_cert:
         {{ kibana.ssl.cert_contents | indent(8) }}
     {% endif %}
     - makedirs: True
+    - require_in:
+        - file: configure_kibana_nginx
 
 setup_kibana_ssl_key:
   file.managed:
@@ -52,6 +54,8 @@ setup_kibana_ssl_key:
         {{ kibana.ssl.key_contents | indent(8) }}
     {% endif %}
     - makedirs: True
+    - require_in:
+        - file: configure_kibana_nginx
 {% else %}
 setup_kibana_ssl_cert:
   module.run:
@@ -63,6 +67,8 @@ setup_kibana_ssl_cert:
     {% for arg, val in salt.pillar.get('kibana:ssl:cert_params', {}).items() -%}
     - {{ arg }}: {{ val }}
     {% endfor -%}
+    - require_in:
+        - file: configure_kibana_nginx
 {% endif %}
 
 generate_nginx_dhparam:
@@ -84,7 +90,6 @@ configure_kibana_nginx:
         kibana_config: {{ kibana.config }}
     - require:
         - cmd: generate_nginx_dhparam
-        - module: setup_kibana_ssl_cert
 
 remove_default_nginx_config:
   file.absent:
