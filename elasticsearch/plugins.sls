@@ -11,7 +11,7 @@ include:
 {% for plugin in salt.pillar.get('elasticsearch:plugins', {}) %}
 install_{{ plugin.name }}_plugin:
   cmd.run:
-    - name: /usr/share/elasticsearch/bin/{{ elasticsearch_plugin_bin }} install {{ plugin.get('location', plugin.name) }}
+    - name: sudo /usr/share/elasticsearch/bin/{{ elasticsearch_plugin_bin }} install {{ plugin.get('location', plugin.name) }}
     - unless: "[ $(/usr/share/elasticsearch/bin/{{ elasticsearch_plugin_bin }} list | grep {{ plugin.name }} | wc -l) -eq 1 ]"
     - watch_in:
         - service: elasticsearch_service
